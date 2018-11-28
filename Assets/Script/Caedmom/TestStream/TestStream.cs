@@ -27,14 +27,15 @@ public class TestStream : MonoBehaviour {
         //    Debug.Log(string.Format("arr{0}={1}", i, arr[i]));
         //}
 
-        byte[] arr = new byte[4];
-        arr[0] = 86;
-        arr[1] = 128;
-        arr[2] = 224;
-        arr[3] = 5;
+        //byte[] arr = new byte[4];
+        //arr[0] = 86;
+        //arr[1] = 128;
+        //arr[2] = 224;
+        //arr[3] = 5;
+        byte[] arr = { 86, 128, 224, 5};
 
         int a = BitConverter.ToInt32(arr, 0);
-        Debug.Log(a);
+        Debug.Log("a="+a);
 
     }
 	
