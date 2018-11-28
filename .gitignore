@@ -7,7 +7,7 @@ Library/
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
-.vs/
+/.vs/
 ExportedObj/
 obj/
 *.svd
