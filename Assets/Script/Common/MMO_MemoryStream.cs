@@ -16,6 +16,16 @@ using System;
 using System.Text;
 
 public class MMO_MemoryStream : MemoryStream {
+
+    public MMO_MemoryStream()
+    {
+
+    }
+
+    public MMO_MemoryStream(byte[] buffer) : base(buffer)
+    {
+
+    }
     #region Short
     /// <summary>
     /// 从流中读取short数据
