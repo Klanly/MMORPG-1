@@ -27,4 +27,9 @@ public class MMO_MemorySystem : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    public void ReadShort()
+    {
+
+    }
 }
