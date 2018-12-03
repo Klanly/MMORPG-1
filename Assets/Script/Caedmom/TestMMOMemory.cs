@@ -18,11 +18,11 @@ public class TestMMOMemory : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        List<ProductEntity> lst = ProductDBModel.Instance.GetList();
+        List<JobEntity> lst = JobDBModel.Instance.GetList();
 
         for (int i = 0; i < lst.Count; i++)
         {
-            Debug.Log("name=" + lst[i].Name);
+            Debug.Log(lst[i].Desc);
         }
 
         Debug.Log(lst.Count);
