@@ -43,20 +43,87 @@ public class NetWorkSocket : MonoBehaviour
     //定义缓冲区
     //private byte[] buffer = new byte[10240];
 
+    #region 发送消息所需变量
     //定义发送消息队列并实例化
     private Queue<byte[]> m_SendQueue = new Queue<byte[]>();
 
     //定义没有参数的委托，用于检查队列
     private Action m_CheckSendQueue;
+    #endregion
+
+    #region 接收消息所需变量
+    //接收数据包的字节数组缓冲区
+    private byte[] m_ReceiveBuffer = new byte[10240];
+
+    //定义MMO_MemoryStream属性,接收数据包的缓冲数据流
+    private MMO_MemoryStream m_ReceiveMS = new MMO_MemoryStream();
+
+    //接收消息的队列
+    private Queue<byte[]> m_ReceiveQueue = new Queue<byte[]>();
+
+    //数据非常多时 不能一次性读完
+    private int m_ReceiveCount = 0;
+    #endregion
 
     /// <summary>
     /// 客户端Socket
     /// </summary>
     private Socket m_Client;
 
+    void Start()
+    {
+
+    }
+
+    void Update()
+    {
+        #region 从队列中获取数据
+        while (true)
+        {
+            //每帧读取5个数据
+            if (m_ReceiveCount <= 5)
+            {
+                m_ReceiveCount++;
+                lock (m_ReceiveQueue)
+                {
+                    //如果队列中有数据，则接收数据
+                    if (m_ReceiveQueue.Count > 0)
+                    {
+                        //将数据存入数组
+                        byte[] buffer = m_ReceiveQueue.Dequeue();
+
+                        using(MMO_MemoryStream ms = new MMO_MemoryStream(buffer))
+                        {
+                            string msg = ms.ReadUTF8String();
+                            Debug.Log(msg);
+                        }
+                        
+                        //发送数据
+                        using(MMO_MemoryStream ms = new MMO_MemoryStream())
+                        {
+                            ms.WriteUTF8String("客户端时间=" + DateTime.Now.ToString());
+                            this.SendMsg(ms.ToArray());
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                m_ReceiveCount = 0;
+                break;
+            }
+        }
+        #endregion
+
+    }
+
     void OnDestroy()
     {
-        if(m_Client !=null && m_Client.Connected)
+        if (m_Client != null && m_Client.Connected)
         {
             m_Client.Shutdown(SocketShutdown.Both);
             m_Client.Close();
@@ -69,7 +136,7 @@ public class NetWorkSocket : MonoBehaviour
     /// </summary>
     /// <param name="ip">服务器ip</param>
     /// <param name="port">端口号</param>
-    public void Connect(string ip,int port)
+    public void Connect(string ip, int port)
     {
         //如果Socket不存在或已在连接状态，直接返回return
         if (m_Client != null && m_Client.Connected) return;
@@ -85,11 +152,13 @@ public class NetWorkSocket : MonoBehaviour
             //在进行客户端连接时，监听用于检查队列的委托
             m_CheckSendQueue = OnCheckSendQueueCallBack;
 
+            //连接成功时接收消息
+            ReceiveMsg();
             Debug.Log("连接成功");
         }
         catch (Exception ex)
         {
-            Debug.Log("连接失败"+ex.Message);
+            Debug.Log("连接失败" + ex.Message);
         }
     }
     #endregion
@@ -123,12 +192,12 @@ public class NetWorkSocket : MonoBehaviour
     private byte[] MakeData(byte[] data)
     {
         byte[] retBuffer = null;
-        using(MMO_MemoryStream ms = new MMO_MemoryStream())
+        using (MMO_MemoryStream ms = new MMO_MemoryStream())
         {
             //往ms中写入数据
             ms.WriteUShort((ushort)data.Length);
             ms.Write(data, 0, data.Length);
-            
+
             retBuffer = ms.ToArray();
         }
 
@@ -184,6 +253,150 @@ public class NetWorkSocket : MonoBehaviour
 
         //继续检查队列(执行回调方法即可)
         OnCheckSendQueueCallBack();
+    }
+    #endregion
+
+    //=================接收消息====================
+    #region ReceiveMsg 接收数据
+    /// <summary>
+    ///接收数据
+    /// </summary>
+    private void ReceiveMsg()
+    {
+        //异步接收数据
+        m_Client.BeginReceive(m_ReceiveBuffer, 0, m_ReceiveBuffer.Length, SocketFlags.None, ReceiveCallBack, m_Client);
+    }
+    #endregion
+
+    #region ReceiveCallBack 接收数据回调函数
+    /// <summary>
+    /// 接收数据回调函数
+    /// </summary>
+    /// <param name="ar"></param>
+    private void ReceiveCallBack(IAsyncResult ar)
+    {
+        try
+        {
+            int len = m_Client.EndReceive(ar);
+
+            if (len > 0)
+            {
+                //已经接收到数据
+
+                //把接收到的数据 写入缓冲数据流的尾部
+                m_ReceiveMS.Position = m_ReceiveMS.Length;
+
+                //把指定长度的字节 写入数据流
+                m_ReceiveMS.Write(m_ReceiveBuffer, 0, len);
+
+                //假设只有一条消息，这个就是我们收到的消息
+                //byte[] buffer = m_ReceiveMS.ToArray();
+                //Console.WriteLine("buffer=" + buffer.Length);
+
+                //如果缓存数据流的长度>2 说明至少有个不完整的包过来了
+                //这里为什么是2 因为客户端封装数据包用的是UShort 长度是2
+                if (m_ReceiveMS.Length > 2)
+                {
+                    //进行循环 拆分数据包                 
+                    while (true)
+                    {
+                        //把数据流指针位置放在0处
+                        m_ReceiveMS.Position = 0;
+
+                        //currMsgLen = 包体的长度
+                        int currMsgLen = m_ReceiveMS.ReadUShort();
+
+                        //currFullMsgLen 总包的长度 = 包头长度+包体长度
+                        int currFullMsgLen = 2 + currMsgLen;
+
+                        //如果数据流的长度>=整包的长度 说明至少收到了一个完整包
+                        //如果有一个完整包 则可以进行拆包
+                        if (m_ReceiveMS.Length >= currFullMsgLen)
+                        {
+                            //至少收到一个完整包
+
+                            //定义包体的byte[]数组
+                            byte[] buffer = new byte[currMsgLen];
+
+                            //把数据流指针放到2的位置 也就是包体的位置
+                            m_ReceiveMS.Position = 2;
+
+                            //把包体读到byte[]数组
+                            m_ReceiveMS.Read(buffer, 0, currMsgLen);
+
+                            //将数据包压入队列
+                            lock (m_ReceiveQueue)
+                            {
+                                m_ReceiveQueue.Enqueue(buffer);
+                            }
+                            //buffer这个byte[]数组就是包体 也就是我们要的数据
+                            //using (MMO_MemoryStream ms2 = new MMO_MemoryStream(buffer))
+                            //{
+                            //    string msg = ms2.ReadUTF8String();
+                            //    Console.WriteLine(msg);
+                            //}
+
+                            //=============处理剩余字节数组数据=================
+
+                            //剩余字节长度
+                            int remainLen = (int)m_ReceiveMS.Length - currFullMsgLen;
+                            if (remainLen > 0)
+                            {
+                                //指针放到第一个包的尾部
+                                m_ReceiveMS.Position = currFullMsgLen;
+
+                                //定义剩余字节数组
+                                byte[] remainBuffer = new byte[remainLen];
+
+                                //把数据流读到剩余字节数组
+                                m_ReceiveMS.Read(remainBuffer, 0, remainLen);
+
+                                //清空数据流
+                                m_ReceiveMS.Position = 0;
+                                m_ReceiveMS.SetLength(0);
+
+                                //把剩余字节数组重新写入数据流
+                                m_ReceiveMS.Write(remainBuffer, 0, remainBuffer.Length);
+
+                                remainBuffer = null;
+                            }
+                            else
+                            {
+                                //没有剩余字节 则直接清空数据流
+                                m_ReceiveMS.Position = 0;
+                                m_ReceiveMS.SetLength(0);
+
+                                break;
+                            }
+
+                        }
+                        else
+                        {
+                            //还没有收到完整包
+                            break;
+                        }
+                    }
+                }
+
+                //进行下一步接收数据包
+                ReceiveMsg();
+
+
+            }
+            else
+            {
+                //客户端断开连接
+                Debug.Log(string.Format("服务器{0}断开连接", m_Client.RemoteEndPoint.ToString()));
+
+            }
+        }
+        catch (Exception ex)
+        {
+            //客户端断开连接
+            Debug.Log(string.Format("客户端{0}断开连接", m_Client.RemoteEndPoint.ToString()));
+
+        }
+
     }
     #endregion
 }

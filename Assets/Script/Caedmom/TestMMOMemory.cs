@@ -20,14 +20,39 @@ public class TestMMOMemory : MonoBehaviour
     void Start()
     {
         //1.连接到服务器
-        NetWorkSocket.Instance.Connect("192.168.20.129", 1011);
+        NetWorkSocket.Instance.Connect("192.168.20.129", 1011);        
+    }
 
-        //2.发送消息
-        using(MMO_MemoryStream ms = new MMO_MemoryStream())
+    /// <summary>
+    /// 2.发送消息
+    /// </summary>
+    /// <param name="msg"></param>
+    private void Send(string msg)
+    {
+        using (MMO_MemoryStream ms = new MMO_MemoryStream())
         {
-            ms.WriteUTF8String("你好啊");
+            ms.WriteUTF8String(msg);
 
             NetWorkSocket.Instance.SendMsg(ms.ToArray());
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Send("Hello,A!");
+        }
+        else if (Input.GetKeyDown(KeyCode.B))
+        {
+            Send("Hello,B!");
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                Send("Hello,C!"+i);
+            }     
         }
     }
 }
