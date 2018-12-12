@@ -53,7 +53,7 @@ public class NetWorkSocket : MonoBehaviour
 
     #region 接收消息所需变量
     //接收数据包的字节数组缓冲区
-    private byte[] m_ReceiveBuffer = new byte[10240];
+    private byte[] m_ReceiveBuffer = new byte[2048];
 
     //定义MMO_MemoryStream属性,接收数据包的缓冲数据流
     private MMO_MemoryStream m_ReceiveMS = new MMO_MemoryStream();
@@ -91,19 +91,17 @@ public class NetWorkSocket : MonoBehaviour
                     {
                         //将数据存入数组
                         byte[] buffer = m_ReceiveQueue.Dequeue();
+                        //读取协议编号
+                        ushort protoCode = 0;
+                        //数据包内容
+                        byte[] protoContent = new byte[buffer.Length - 2];
 
-                        using(MMO_MemoryStream ms = new MMO_MemoryStream(buffer))
+                        using (MMO_MemoryStream ms = new MMO_MemoryStream(buffer))
                         {
-                            string msg = ms.ReadUTF8String();
-                            Debug.Log(msg);
+                            protoCode = ms.ReadUShort();
+                            ms.Read(protoContent, 0, protoContent.Length);
                         }
-                        
-                        //发送数据
-                        using(MMO_MemoryStream ms = new MMO_MemoryStream())
-                        {
-                            ms.WriteUTF8String("客户端时间=" + DateTime.Now.ToString());
-                            this.SendMsg(ms.ToArray());
-                        }
+
                     }
                     else
                     {

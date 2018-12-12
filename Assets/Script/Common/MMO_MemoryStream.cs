@@ -176,7 +176,7 @@ public class MMO_MemoryStream : MemoryStream {
     /// 将一个float数据写入流
     /// </summary>
     /// <param name="value"></param>
-    public void Write(float value)
+    public void WriteFloat(float value)
     {
         byte[] arr = BitConverter.GetBytes(value);
         base.Write(arr, 0, arr.Length);
