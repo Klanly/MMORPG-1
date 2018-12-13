@@ -100,6 +100,11 @@ public class NetWorkSocket : MonoBehaviour
                         {
                             protoCode = ms.ReadUShort();
                             ms.Read(protoContent, 0, protoContent.Length);
+
+                            EventDispatcher.Instance.Dispatch(protoCode, protoContent);
+
+                            //temp ，通过委托发送消息
+                            //GlobalInit.Instance.OnReceiveProto(protoCode,buffer);
                         }
 
                     }

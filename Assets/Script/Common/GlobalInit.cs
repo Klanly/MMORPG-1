@@ -8,6 +8,10 @@ using System.Collections;
 
 public class GlobalInit : MonoBehaviour 
 {
+    //定义委托
+    public delegate void OnReceiveProtoHandler(ushort protoCode, byte[] buffer);
+    public OnReceiveProtoHandler OnReceiveProto;
+
     #region 常量
     /// <summary>
     /// 昵称KEY

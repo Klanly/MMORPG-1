@@ -21,7 +21,7 @@ public struct TestProto: IProto
     /// 属性
     /// </summary>
     //协议编号
-    public ushort ProtoCode { get { return 1001; } } 
+    public ushort ProtoCode { get { return 1004; } } 
     //协议数据
     public int Id;
     public string Name;

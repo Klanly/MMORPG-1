@@ -17,7 +17,17 @@ using System.Collections;
 public class ProtoCodeDef {
 
     /// <summary>
+    /// 测试协议
+    /// </summary>
+    public const ushort Test = 1004;
+
+    /// <summary>
+    /// 获取邮件详情
+    /// </summary>
+    public const ushort Mail_Get_Detail = 1005;
+
+    /// <summary>
     /// 从服务器返回道具列表
     /// </summary>
-    public const ushort Mail_Ret_List = 2001;
+    public const ushort Mall_Ret_List = 2001;
 }
