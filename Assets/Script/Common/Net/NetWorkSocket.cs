@@ -16,6 +16,9 @@ using System.Net;
 using System.Collections.Generic;
 using System.Text;
 
+/// <summary>
+/// 网络传输Socket
+/// </summary>
 public class NetWorkSocket : MonoBehaviour
 {
 
@@ -49,6 +52,9 @@ public class NetWorkSocket : MonoBehaviour
 
     //定义没有参数的委托，用于检查队列
     private Action m_CheckSendQueue;
+
+    //压缩数组的长度界限（大于200则压缩）
+    private const int m_CompressLength = 200;
     #endregion
 
     #region 接收消息所需变量
@@ -197,9 +203,29 @@ public class NetWorkSocket : MonoBehaviour
         byte[] retBuffer = null;
         using (MMO_MemoryStream ms = new MMO_MemoryStream())
         {
-            //往ms中写入数据
+            //0.写入包长度
+            //往ms中写入数据(包长度)
             ms.WriteUShort((ushort)data.Length);
-            ms.Write(data, 0, data.Length);
+
+            //1.压缩标志
+            //数据包长度大于设定长度
+            bool isCompress = data.Length > m_CompressLength ? true : false;
+            //往ms中写入数据(压缩标识)
+            ms.WriteBool(isCompress);
+            //数据包长度大于设定长度则进行压缩
+            if (isCompress)
+            {
+                data = ZlibHelper.CompressBytes(data);
+            }
+
+            //2.CRC校验
+            //往ms中写入数据(crc校验)
+            ushort crc = Crc16.CalculateCrc16(data);
+            ms.WriteUShort(crc);
+
+            //3.异或
+            ms.Write(SecurityUtil.Xor(data), 0, data.Length);
+            //sms.Write(data, 0, data.Length);
 
             retBuffer = ms.ToArray();
         }

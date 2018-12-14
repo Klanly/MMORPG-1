@@ -20,10 +20,10 @@ public class TestMMOMemory : MonoBehaviour
     void Start()
     {
         //1.连接到服务器
-        NetWorkSocket.Instance.Connect("192.168.20.129", 1011);
+        NetWorkSocket.Instance.Connect(GlobalInit.SocketIP, GlobalInit.Port);
 
         //监听委托
-        GlobalInit.Instance.OnReceiveProto = OnReceiveProtoCallBack;
+        //GlobalInit.Instance.OnReceiveProto = OnReceiveProtoCallBack;
     }
 
     //委托回调
@@ -56,6 +56,11 @@ public class TestMMOMemory : MonoBehaviour
             proto.Type = 80;
 
             //发送
+            NetWorkSocket.Instance.SendMsg(proto.ToArray());
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Mail_Get_DetailProto proto = new Mail_Get_DetailProto();
             NetWorkSocket.Instance.SendMsg(proto.ToArray());
         }
     }
