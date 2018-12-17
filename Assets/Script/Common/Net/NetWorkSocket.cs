@@ -95,22 +95,59 @@ public class NetWorkSocket : MonoBehaviour
                     //如果队列中有数据，则接收数据
                     if (m_ReceiveQueue.Count > 0)
                     {
-                        //将数据存入数组
+                        //得到队列中的数据包；将数据存入数组
                         byte[] buffer = m_ReceiveQueue.Dequeue();
+
+                        //异或之后的数组；数据包内容
+                        byte[] bufferNew = new byte[buffer.Length - 3];
+
+                        bool isCompress = false;
+                        ushort crc = 0;
+
                         //读取协议编号
-                        ushort protoCode = 0;
+                        //ushort protoCode = 0;
                         //数据包内容
-                        byte[] protoContent = new byte[buffer.Length - 2];
+                        //byte[] protoContent = new byte[buffer.Length - 2];
 
                         using (MMO_MemoryStream ms = new MMO_MemoryStream(buffer))
                         {
-                            protoCode = ms.ReadUShort();
-                            ms.Read(protoContent, 0, protoContent.Length);
+                            isCompress = ms.ReadBool();
+                            //传递过来的CRC
+                            crc = ms.ReadUShort();
+                            ms.Read(bufferNew, 0, bufferNew.Length);
+                        }
 
-                            EventDispatcher.Instance.Dispatch(protoCode, protoContent);
+                        //计算CRC
+                        int newCrc = Crc16.CalculateCrc16(bufferNew);
 
-                            //temp ，通过委托发送消息
-                            //GlobalInit.Instance.OnReceiveProto(protoCode,buffer);
+                        Debug.Log("CRC=" + crc);
+                        Debug.Log("NewCRC=" + newCrc);
+
+                        if (newCrc == crc)
+                        {
+                            //异或，得到原始数据
+                            bufferNew = SecurityUtil.Xor(bufferNew);
+
+                            //解压缩
+                            if (isCompress)
+                            {
+                                bufferNew = ZlibHelper.DeCompressBytes(bufferNew);
+                            }
+
+                            ushort protoCode = 0;
+                            byte[] protoContent = new byte[buffer.Length - 2];
+                            //解析
+                            using (MMO_MemoryStream ms = new MMO_MemoryStream(bufferNew))
+                            {
+                                protoCode = ms.ReadUShort();
+                                ms.Read(protoContent,0,protoContent.Length);
+
+                                EventDispatcher.Instance.Dispatch(protoCode, protoContent);
+                            }
+                        }
+                        else
+                        {
+                            break;
                         }
 
                     }
@@ -201,31 +238,28 @@ public class NetWorkSocket : MonoBehaviour
     private byte[] MakeData(byte[] data)
     {
         byte[] retBuffer = null;
+        //0.压缩标志 //数据包长度大于设定长度则压缩
+        bool isCompress = data.Length > m_CompressLength ? true : false;
+        if (isCompress)
+        {
+            data = ZlibHelper.CompressBytes(data);
+        }
+
+        //1.异或
+        data = SecurityUtil.Xor(data);
+
+        //2.CRC校验
+        ushort crc = Crc16.CalculateCrc16(data);
+
         using (MMO_MemoryStream ms = new MMO_MemoryStream())
         {
-            //0.写入包长度
-            //往ms中写入数据(包长度)
-            ms.WriteUShort((ushort)data.Length);
-
-            //1.压缩标志
-            //数据包长度大于设定长度
-            bool isCompress = data.Length > m_CompressLength ? true : false;
+            //3.写入包长度
+            //往ms中写入数据(包长度),数据的长度+压缩标志（1byte）+CRC校验（UShort（2byte））
+            ms.WriteUShort((ushort)(data.Length + 3));
             //往ms中写入数据(压缩标识)
             ms.WriteBool(isCompress);
-            //数据包长度大于设定长度则进行压缩
-            if (isCompress)
-            {
-                data = ZlibHelper.CompressBytes(data);
-            }
-
-            //2.CRC校验
-            //往ms中写入数据(crc校验)
-            ushort crc = Crc16.CalculateCrc16(data);
             ms.WriteUShort(crc);
-
-            //3.异或
-            ms.Write(SecurityUtil.Xor(data), 0, data.Length);
-            //sms.Write(data, 0, data.Length);
+            ms.Write(data, 0, data.Length);
 
             retBuffer = ms.ToArray();
         }
