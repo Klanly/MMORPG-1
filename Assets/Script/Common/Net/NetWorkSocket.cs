@@ -19,29 +19,8 @@ using System.Text;
 /// <summary>
 /// 网络传输Socket
 /// </summary>
-public class NetWorkSocket : MonoBehaviour
+public class NetWorkSocket : SingletonMono<NetWorkSocket>
 {
-
-    #region 单例
-    private static NetWorkSocket instance;
-
-    public static NetWorkSocket Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                //instance = new NetWorkHttp();
-                //继承自MonoBehaviour的单例写法
-                GameObject obj = new GameObject("NetWorkSocket");
-                //不释放/不销毁这个物体
-                DontDestroyOnLoad(obj);
-                instance = obj.GetOrCreatComponent<NetWorkSocket>();
-            }
-            return instance;
-        }
-    }
-    #endregion
 
     //定义缓冲区
     //private byte[] buffer = new byte[10240];
@@ -76,13 +55,15 @@ public class NetWorkSocket : MonoBehaviour
     /// </summary>
     private Socket m_Client;
 
-    void Start()
+    protected override void OnStart()
     {
-
+        base.OnStart();
     }
 
-    void Update()
+    protected override void OnUpdate()
     {
+        base.OnUpdate();
+
         #region 从队列中获取数据
         while (true)
         {
@@ -140,7 +121,7 @@ public class NetWorkSocket : MonoBehaviour
                             using (MMO_MemoryStream ms = new MMO_MemoryStream(bufferNew))
                             {
                                 protoCode = ms.ReadUShort();
-                                ms.Read(protoContent,0,protoContent.Length);
+                                ms.Read(protoContent, 0, protoContent.Length);
 
                                 EventDispatcher.Instance.Dispatch(protoCode, protoContent);
                             }
@@ -164,17 +145,19 @@ public class NetWorkSocket : MonoBehaviour
             }
         }
         #endregion
-
     }
 
-    void OnDestroy()
+    protected override void BeforeOnDestroy()
     {
+        base.BeforeOnDestroy();
+
         if (m_Client != null && m_Client.Connected)
         {
             m_Client.Shutdown(SocketShutdown.Both);
             m_Client.Close();
         }
     }
+
 
     #region Connect 连接到Socket服务器
     /// <summary>

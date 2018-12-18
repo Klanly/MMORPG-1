@@ -15,29 +15,8 @@ using System;
 /// <summary>
 /// Http通讯管理
 /// </summary>
-public class NetWorkHttp : MonoBehaviour
+public class NetWorkHttp : SingletonMono<NetWorkHttp>
 {
-
-    #region 单例
-    private static NetWorkHttp instance;
-
-    public static NetWorkHttp Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                //instance = new NetWorkHttp();
-                //继承自MonoBehaviour的单例写法
-                GameObject obj = new GameObject("NetWorkHttp");
-                //不释放/不销毁这个物体
-                DontDestroyOnLoad(obj);
-                instance = obj.GetOrCreatComponent<NetWorkHttp>();
-            }
-            return instance;
-        }
-    }
-    #endregion
 
     #region 属性
     /// <summary>
@@ -64,13 +43,12 @@ public class NetWorkHttp : MonoBehaviour
     }
     #endregion
 
-    void Start()
+    protected override void OnStart()
     {
+        base.OnStart();
         //只在一个地方实例化，节省内存
         m_CallBackArgs = new CallBackArgs();
     }
-
-
 
     #region SendData() 发送Web数据
     /// <summary>
