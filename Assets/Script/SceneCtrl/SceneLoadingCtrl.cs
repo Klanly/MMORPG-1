@@ -5,8 +5,9 @@
 //===================================================
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
-public class LoadingSceneCtrl : MonoBehaviour 
+public class SceneLoadingCtrl : MonoBehaviour 
 {
     /// <summary>
     /// UI场景控制器
@@ -40,7 +41,7 @@ public class LoadingSceneCtrl : MonoBehaviour
                 break;
         }
 
-        m_Async = Application.LoadLevelAsync(strSceneName);
+        m_Async = SceneManager.LoadSceneAsync(strSceneName,LoadSceneMode.Additive);
         m_Async.allowSceneActivation = false;
         yield return m_Async;
     }
