@@ -6,6 +6,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System;
 
 public class SceneLoadingCtrl : MonoBehaviour 
 {
@@ -24,8 +25,27 @@ public class SceneLoadingCtrl : MonoBehaviour
 
 	void Start ()
 	{
+        //监听场景是否加载完毕
+        DelegateDefine.Instance.OnSceneLoadOk += OnSceneLoadOk;
+
         LayerUIMgr.Instance.Reset();
         StartCoroutine(LoadingScene());
+    }
+
+    void OnDestroy()
+    {        
+        //销毁时移除监听
+        DelegateDefine.Instance.OnSceneLoadOk -= OnSceneLoadOk;
+    }
+
+    private void OnSceneLoadOk()
+    {
+        Debug.Log("销毁UI");
+
+        if (m_UILoadingCtrl != null)
+        {
+            Destroy(m_UILoadingCtrl.gameObject);
+        }
     }
 
     private IEnumerator LoadingScene()
@@ -38,6 +58,9 @@ public class SceneLoadingCtrl : MonoBehaviour
                 break;
             case SceneType.City:
                 strSceneName = "GameScene_CunZhuang";
+                break;
+            case SceneType.ShaMo:
+                strSceneName = "GameScene_ShaMo";
                 break;
         }
 

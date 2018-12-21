@@ -28,6 +28,14 @@ public class CitySceneCtrl : MonoBehaviour
 
     void Start()
     {
+        //在设置好之后销毁loading(由于检测GlobalInit单例是否存在，不存在则直接return，就先放到前面)
+        if (DelegateDefine.Instance.OnSceneLoadOk != null)
+        {
+            DelegateDefine.Instance.OnSceneLoadOk();
+        }
+
+        if (GlobalInit.Instance == null) return;
+
         //加载玩家
         GameObject obj = RoleMgr.Instance.LoadRole("Role_MainPlayer", RoleType.MainPlayer);
 
@@ -38,6 +46,15 @@ public class CitySceneCtrl : MonoBehaviour
         GlobalInit.Instance.CurrPlayer.Init(RoleType.MainPlayer, new RoleInfoBase() { NickName = GlobalInit.Instance.CurrRoleNickName, CurrHP=10000, MaxHP=10000 }, new RoleMainPlayerCityAI(GlobalInit.Instance.CurrPlayer));
 
         UIPlayerInfo.Instance.SetPlayerInfo();
+
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.B))
+        {
+            SceneMgr.Instance.LoadToShaMo();
+        }
     }
 
     #region OnZoom 摄像机缩放

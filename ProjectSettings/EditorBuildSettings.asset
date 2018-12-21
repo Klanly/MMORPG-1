@@ -13,3 +13,5 @@ EditorBuildSettings:
     path: Assets/Scene/SceneMap/Scene_Loading.unity
   - enabled: 1
     path: Assets/Scene/SceneMap/GameScene_CunZhuang.unity
+  - enabled: 1
+    path: Assets/Scene/SceneMap/GameScene_ShaMo.unity

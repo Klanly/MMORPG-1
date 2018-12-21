@@ -36,10 +36,32 @@ public class SerializedLightmapSetting : MonoBehaviour
                         lightmaps[i].lightmapNear = lightmapNear[i];
                 }
             }
+            //将贴图指定到LightmapSettings
             LightmapSettings.lightmaps = lightmaps;
             Destroy(this);
         }
     }
+
+    //去掉贴图的引用
+    void OnDestroy()
+    {
+        if (lightmapFar != null && lightmapFar.Length > 0)
+        {
+            for (int i = 0; i < lightmapFar.Length; i++)
+            {
+                lightmapFar[i] = null;
+            }
+        }
+
+        if (lightmapNear != null && lightmapNear.Length > 0)
+        {
+            for (int i = 0; i < lightmapNear.Length; i++)
+            {
+                lightmapNear[i] = null;
+            }
+        }
+    }
+
 #if UNITY_EDITOR
     public void LoadLightmaps()
     {
