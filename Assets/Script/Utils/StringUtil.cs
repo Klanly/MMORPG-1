@@ -24,6 +24,18 @@ public static class StringUtil
     }
 
     /// <summary>
+    /// 把string类型转换成long
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    public static long ToLong(this string str)
+    {
+        long temp = 0;
+        long.TryParse(str, out temp);
+        return temp;
+    }
+
+    /// <summary>
     /// 把string类型转化为float
     /// </summary>
     /// <param name="str"></param>
