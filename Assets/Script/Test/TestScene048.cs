@@ -16,10 +16,8 @@ public class TestScene048 : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("dataPath=" + Application.dataPath);
-        Debug.Log("persistentDataPath=" + Application.persistentDataPath);
-        Debug.Log("streamingAssetsPath=" + Application.streamingAssetsPath);
-        Debug.Log("temporaryCachePath=" + Application.temporaryCachePath);
+        //从数组中读取bundle
+        //AssetBundle.LoadFromMemory()
 
     }
 
