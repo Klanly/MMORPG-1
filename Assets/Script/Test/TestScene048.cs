@@ -10,19 +10,28 @@
 
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class TestScene048 : MonoBehaviour
 {
 
     void Start()
     {
-        //从数组中读取bundle
-        //AssetBundle.LoadFromMemory()
+        //异步加载
+        //AssetBundleLoaderAsync async = AssetBundleMgr.Instance.LoadAsync(@"Role\role_mainplayer.assetbundle", "Role_MainPlayer");
+        //async.OnLoadComplete = OnLoadComplete;
 
+        //AssetBundleMgr.Instance.LoadAsync(@"Role\role_mainplayer.assetbundle", "Role_MainPlayer").OnLoadComplete = OnLoadComplete;
+
+        AssetBundleMgr.Instance.LoadAsync(@"Role\role_mainplayer.assetbundle", "Role_MainPlayer").OnLoadComplete = (UnityEngine.Object obj) =>
+        {
+            Instantiate(obj);
+        };
     }
 
-    void Update()
-    {
-
-    }
+    //private void OnLoadComplete(UnityEngine.Object obj)
+    //{
+    //    //Instantiate((GameObject)obj);
+    //    Instantiate(obj);
+    //}
 }
