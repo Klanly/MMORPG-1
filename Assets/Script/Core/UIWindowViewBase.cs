@@ -42,6 +42,15 @@ public class UIWindowViewBase : UIViewBase
     /// </summary>
     protected WindowUIType NextOpenWindow = WindowUIType.None;
 
+    protected override void OnBtnClick(GameObject go)
+    {
+        base.OnBtnClick(go);
+        if (go.name.Equals("btn_Close", System.StringComparison.CurrentCultureIgnoreCase))
+        {
+            Close();
+        }
+    }
+
     /// <summary>
     /// 关闭窗口
     /// </summary>
@@ -55,8 +64,8 @@ public class UIWindowViewBase : UIViewBase
     /// </summary>
     protected override void BeforeOnDestroy()
     {
-        LayerUIMgr.Instance.CheckOpenWindow();
-        if (NextOpenWindow == WindowUIType.None) return;
-        WindowUIMgr.Instance.OpenWindow(NextOpenWindow);
+        //LayerUIMgr.Instance.CheckOpenWindow();
+        //if (NextOpenWindow == WindowUIType.None) return;
+        //WindowUIMgr.Instance.OpenWindow(NextOpenWindow);
     }
 }
