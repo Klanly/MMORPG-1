@@ -601,9 +601,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   containerType: 4
-  showStyle: 0
+  showStyle: 2
   duration: 0.2
   CurrentUIType: 0
+  NextOpenWindow: 0
 --- !u!114 &11421338
 MonoBehaviour:
   m_ObjectHideFlags: 1

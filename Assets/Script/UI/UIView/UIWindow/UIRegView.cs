@@ -13,14 +13,17 @@ using System.Collections;
 
 public class UIRegView : UIWindowViewBase
 {
-
-    void Start()
+    protected override void OnBtnClick(GameObject go)
     {
-
-    }
-
-    void Update()
-    {
-
+        base.OnBtnClick(go);
+        switch (go.name)
+        {
+            case "btnLogOn":
+                Debug.Log("点击了登录按钮");
+                break;
+            case "btnToReg":
+                Debug.Log("点击了去注册按钮");
+                break;
+        }
     }
 }

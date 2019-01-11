@@ -152,13 +152,29 @@ public class WindowUIMgr : Singleton<WindowUIMgr>
     {
         windowBase.gameObject.SetActive(true);
         windowBase.transform.localScale = Vector3.zero;
+        //创建动画后暂停
         //动画播放完毕后不销毁
-        Tweener ts = windowBase.transform.DOScale(Vector3.one, windowBase.duration).SetAutoKill(false).OnComplete(() =>
+        windowBase.transform.DOScale(Vector3.one, windowBase.duration)
+            .SetAutoKill(false)
+            .SetEase(GlobalInit.Instance.UIAnimationCurve)
+            .Pause().OnRewind(() =>
         {
-            if (!isOpen)
-                DestroyWindow(windowBase);        
+            DestroyWindow(windowBase);
         });
-        if (!isOpen) ts.PlayBackwards();
+        //    .OnComplete(() =>
+        //{
+        //    if (!isOpen)
+        //        DestroyWindow(windowBase);        
+        //});
+        //if (!isOpen) ts.PlayBackwards();
+        if (isOpen)
+        {
+            windowBase.transform.DOPlayForward();
+        }
+        else
+        {
+            windowBase.transform.DOPlayBackwards();
+        }
 
         //TweenScale ts = windowBase.gameObject.GetOrCreatComponent<TweenScale>();
         //ts.animationCurve = GlobalInit.Instance.UIAnimationCurve;
@@ -183,23 +199,40 @@ public class WindowUIMgr : Singleton<WindowUIMgr>
     {
         //TweenPosition tp = windowBase.gameObject.GetOrCreatComponent<TweenPosition>();
         //tp.animationCurve = GlobalInit.Instance.UIAnimationCurve;
+        windowBase.gameObject.SetActive(true);
+        Vector3 from = Vector3.zero;
+        switch (dirType)
+        {
+            case 0:
+                from = new Vector3(0, 1000, 0);
+                break;
+            case 1:
+                from = new Vector3(0, -1000, 0);
+                break;
+            case 2:
+                from = new Vector3(-1400, 0, 0);
+                break;
+            case 3:
+                from = new Vector3(1400, 0, 0);
+                break;
+        }
+        windowBase.transform.localPosition = from;
 
-        //Vector3 from = Vector3.zero;
-        //switch (dirType)
-        //{
-        //    case 0:
-        //        from = new Vector3(0, 1000, 0);
-        //        break;
-        //    case 1:
-        //        from = new Vector3(0, -1000, 0);
-        //        break;
-        //    case 2:
-        //        from = new Vector3(-1400, 0, 0);
-        //        break;
-        //    case 3:
-        //        from = new Vector3(1400, 0, 0);
-        //        break;
-        //}
+        windowBase.transform.DOLocalMove(Vector3.zero, windowBase.duration)
+            .SetAutoKill(false)
+            .SetEase(GlobalInit.Instance.UIAnimationCurve)
+            .Pause().OnRewind(() =>
+        {
+            DestroyWindow(windowBase);
+        });
+        if (isOpen)
+        {
+            windowBase.transform.DOPlayForward();
+        }
+        else
+        {
+            windowBase.transform.DOPlayBackwards();
+        }
 
         //tp.from = from;
         //tp.to = Vector3.one;
