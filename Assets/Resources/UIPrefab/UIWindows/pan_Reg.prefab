@@ -151,7 +151,7 @@ GameObject:
   - 114: {fileID: 11482686}
   - 114: {fileID: 11452642}
   m_Layer: 5
-  m_Name: Btn_ToLogOn
+  m_Name: btnToLogOn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -338,7 +338,7 @@ GameObject:
   - 114: {fileID: 11421338}
   - 114: {fileID: 11425072}
   m_Layer: 5
-  m_Name: Btn_Reg
+  m_Name: btnReg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -390,7 +390,7 @@ GameObject:
   - 114: {fileID: 11423474}
   - 114: {fileID: 11440834}
   m_Layer: 5
-  m_Name: btn_Close
+  m_Name: btnClose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

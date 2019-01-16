@@ -18,11 +18,13 @@ public class UIRegView : UIWindowViewBase
         base.OnBtnClick(go);
         switch (go.name)
         {
-            case "btnLogOn":
-                Debug.Log("点击了登录按钮");
+            case "btnReg":
+                Debug.Log("点击了注册按钮");
+                EventDispatcher.Instance.DispatchBtn(ConstDefine.UIRegView_btnReg);
                 break;
-            case "btnToReg":
-                Debug.Log("点击了去注册按钮");
+            case "btnToLogOn":
+                Debug.Log("点击了返回登录按钮");
+                EventDispatcher.Instance.DispatchBtn(ConstDefine.UIRegView_btnToLogOn);
                 break;
         }
     }

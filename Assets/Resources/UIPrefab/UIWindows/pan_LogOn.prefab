@@ -1023,7 +1023,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6CE8 \u518C"
+  m_Text: "\u7ACB\u523B\u6CE8\u518C"
 --- !u!114 &11476460
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1155,6 +1155,7 @@ MonoBehaviour:
   showStyle: 2
   duration: 0.2
   CurrentUIType: 0
+  NextOpenWindow: 0
 --- !u!114 &11485686
 MonoBehaviour:
   m_ObjectHideFlags: 1
