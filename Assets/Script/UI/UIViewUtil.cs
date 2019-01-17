@@ -11,7 +11,7 @@ using DG.Tweening;
 /// <summary>
 /// 窗口UI管理器
 /// </summary>
-public class WindowUIMgr : Singleton<WindowUIMgr>
+public class UIViewUtil : Singleton<UIViewUtil>
 {
     private Dictionary<WindowUIType, UIWindowViewBase> m_DicWindow = new Dictionary<WindowUIType, UIWindowViewBase>();
 
@@ -72,7 +72,7 @@ public class WindowUIMgr : Singleton<WindowUIMgr>
             obj = m_DicWindow[type].gameObject;
         }
         //层级管理
-        //LayerUIMgr.Instance.SetLayer(obj);
+        LayerUIMgr.Instance.SetLayer(obj);
         return obj;
     }
     #endregion

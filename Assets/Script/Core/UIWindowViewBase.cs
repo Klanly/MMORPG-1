@@ -10,6 +10,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class UIWindowViewBase : UIViewBase
 {
@@ -38,17 +39,25 @@ public class UIWindowViewBase : UIViewBase
     public WindowUIType CurrentUIType;
 
     /// <summary>
+    /// 是否会有下个窗口
+    /// </summary>
+    private bool m_OpenNext = false;
+
+    /// <summary>
     /// 下一个要打开的窗口
     /// </summary>
     //protected WindowUIType NextOpenWindow = WindowUIType.None;
-    public WindowUIType NextOpenWindow = WindowUIType.None;
+    //public WindowUIType NextOpenWindow = WindowUIType.None;
+
+    //视图关闭后的委托
+    public Action OnViewClose;
 
     protected override void OnBtnClick(GameObject go)
     {
         base.OnBtnClick(go);
         if (go.name.Equals("btnClose", System.StringComparison.CurrentCultureIgnoreCase))
         {
-            Close();
+            Close(false);
         }
     }
 
@@ -56,9 +65,10 @@ public class UIWindowViewBase : UIViewBase
     /// 关闭窗口
     /// </summary>
     //protected virtual void Close()
-    public virtual void Close()
+    public virtual void Close(bool openNext)
     {
-        WindowUIMgr.Instance.CloseWindow(CurrentUIType);
+        m_OpenNext = openNext;
+        UIViewUtil.Instance.CloseWindow(CurrentUIType);
     }
 
     /// <summary>
@@ -67,7 +77,16 @@ public class UIWindowViewBase : UIViewBase
     protected override void BeforeOnDestroy()
     {
         LayerUIMgr.Instance.CheckOpenWindow();
-        if (NextOpenWindow == WindowUIType.None) return;
-        WindowUIMgr.Instance.OpenWindow(NextOpenWindow);
+        //if (NextOpenWindow == WindowUIType.None) return;
+        //WindowUIMgr.Instance.OpenWindow(NextOpenWindow);
+        if (m_OpenNext)
+        {
+            //当窗口关闭时执行
+            if (OnViewClose != null)
+            {
+                OnViewClose();
+            }
+        }
+        
     }
 }

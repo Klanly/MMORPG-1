@@ -23,9 +23,6 @@ public class UISceneLogOnView : UISceneViewBase
     private IEnumerator OpenLogOnWindow()
     {
         yield return new WaitForSeconds(.2f);
-
-        //没必要获取gameobject，只需要打开即可
-        AccountCtrl.Instance.OpenLogOnView();
-        //GameObject obj = WindowUIMgr.Instance.OpenWindow(WindowUIType.LogOn);
+        UIViewMgr.Instance.OpenWindow(WindowUIType.LogOn);
     }
 }

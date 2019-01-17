@@ -12,16 +12,16 @@ using System.Collections;
 public class LayerUIMgr : Singleton<LayerUIMgr> 
 {
     /// <summary>
-    /// UIPanel层级深度
+    /// UI层级深度
     /// </summary>
-    private int m_UIPanelDepth = 50;
+    private int m_UIViewLayer = 50;
 
     /// <summary>
     /// 重置
     /// </summary>
     public void Reset()
     {
-        m_UIPanelDepth = 50;
+        m_UIViewLayer = 50;
     }
 
     /// <summary>
@@ -29,8 +29,8 @@ public class LayerUIMgr : Singleton<LayerUIMgr>
     /// </summary>
     public void CheckOpenWindow()
     {
-        m_UIPanelDepth--;
-        if (WindowUIMgr.Instance.OpenWindowCount == 0)
+        m_UIViewLayer--;
+        if (UIViewUtil.Instance.OpenWindowCount == 0)
         {
             Reset();
         }
@@ -41,7 +41,11 @@ public class LayerUIMgr : Singleton<LayerUIMgr>
     /// </summary>
     public void SetLayer(GameObject obj)
     {
-        m_UIPanelDepth++;
+        m_UIViewLayer++;
+        //获取canvas组件
+        Canvas m_Canvas = obj.GetComponent<Canvas>();
+        //设置sortingOrder（canvas层级）
+        m_Canvas.sortingOrder = m_UIViewLayer;
 
         //UIPanel[] panArr = obj.GetComponentsInChildren<UIPanel>();
 
