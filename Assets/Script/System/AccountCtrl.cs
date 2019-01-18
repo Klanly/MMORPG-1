@@ -29,12 +29,12 @@ public class AccountCtrl : Singleton<AccountCtrl>,ISystemCtrl
     public AccountCtrl()
     {
         //监听登录窗口按钮点击
-        EventDispatcher.Instance.AddBtnEventListener(ConstDefine.UILogOnView_btnLogOn, LogOnViewBtnLogOnClick);
-        EventDispatcher.Instance.AddBtnEventListener(ConstDefine.UILogOnView_btnToReg, LogOnViewBtnToRegClick);
+        UIDispatcher.Instance.AddBtnEventListener(ConstDefine.UILogOnView_btnLogOn, LogOnViewBtnLogOnClick);
+        UIDispatcher.Instance.AddBtnEventListener(ConstDefine.UILogOnView_btnToReg, LogOnViewBtnToRegClick);
 
         //监听注册窗口按钮点击
-        EventDispatcher.Instance.AddBtnEventListener(ConstDefine.UIRegView_btnReg, RegViewBtnRegClick);
-        EventDispatcher.Instance.AddBtnEventListener(ConstDefine.UIRegView_btnToLogOn, RegViewBtnToLogOnClick);
+        UIDispatcher.Instance.AddBtnEventListener(ConstDefine.UIRegView_btnReg, RegViewBtnRegClick);
+        UIDispatcher.Instance.AddBtnEventListener(ConstDefine.UIRegView_btnToLogOn, RegViewBtnToLogOnClick);
     }
     #endregion
 
@@ -137,12 +137,12 @@ public class AccountCtrl : Singleton<AccountCtrl>,ISystemCtrl
     {
         base.Dispose();
         //移除登录窗口按钮点击监听
-        EventDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UILogOnView_btnLogOn, LogOnViewBtnLogOnClick);
-        EventDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UILogOnView_btnToReg, LogOnViewBtnToRegClick);
+        UIDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UILogOnView_btnLogOn, LogOnViewBtnLogOnClick);
+        UIDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UILogOnView_btnToReg, LogOnViewBtnToRegClick);
 
         //移除注册窗口按钮点击监听
-        EventDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UIRegView_btnReg, RegViewBtnRegClick);
-        EventDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UIRegView_btnToLogOn, RegViewBtnToLogOnClick);
+        UIDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UIRegView_btnReg, RegViewBtnRegClick);
+        UIDispatcher.Instance.RemoveBtnEventListener(ConstDefine.UIRegView_btnToLogOn, RegViewBtnToLogOnClick);
     }
     #endregion
 }
