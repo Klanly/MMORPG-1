@@ -11,7 +11,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class SocketDispatcher : DispatcherBase<SocketDispatcher>
+/// <summary>
+/// 网络通讯观察者
+/// </summary>
+public class SocketDispatcher : DispatcherBase<SocketDispatcher,byte[], ushort>
 {
 
 

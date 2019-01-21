@@ -20,11 +20,11 @@ public class UIRegView : UIWindowViewBase
         {
             case "btnReg":
                 Debug.Log("点击了注册按钮");
-                UIDispatcher.Instance.DispatchBtn(ConstDefine.UIRegView_btnReg);
+                UIDispatcher.Instance.Dispatch(ConstDefine.UIRegView_btnReg);
                 break;
             case "btnToLogOn":
                 Debug.Log("点击了返回登录按钮");
-                UIDispatcher.Instance.DispatchBtn(ConstDefine.UIRegView_btnToLogOn);
+                UIDispatcher.Instance.Dispatch(ConstDefine.UIRegView_btnToLogOn);
                 break;
         }
     }

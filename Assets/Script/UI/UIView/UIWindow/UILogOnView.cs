@@ -20,10 +20,10 @@ public class UILogOnView : UIWindowViewBase
         switch (go.name)
         {
             case "btnLogOn":
-                UIDispatcher.Instance.DispatchBtn("UILogOnView_btnLogOn");
+                UIDispatcher.Instance.Dispatch("UILogOnView_btnLogOn");
                 break;
             case "btnToReg":
-                UIDispatcher.Instance.DispatchBtn("UILogOnView_btnToReg");
+                UIDispatcher.Instance.Dispatch("UILogOnView_btnToReg");
                 break;
         }
     }

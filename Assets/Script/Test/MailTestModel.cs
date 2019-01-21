@@ -18,7 +18,7 @@ public class MailTestModel : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        EventDispatcher.Instance.AddEventListener(ProtoCodeDef.Mail_Get_Detail, OnGetMail);
+        SocketDispatcher.Instance.AddEventListener(ProtoCodeDef.Mail_Get_Detail, OnGetMail);
     }
 
     private void OnGetMail(byte[] buffer)
@@ -29,7 +29,7 @@ public class MailTestModel : MonoBehaviour
 
     void OnDestroy()
     {
-        EventDispatcher.Instance.RemoveEventListener(ProtoCodeDef.Mail_Get_Detail, OnGetMail);
+        SocketDispatcher.Instance.RemoveEventListener(ProtoCodeDef.Mail_Get_Detail, OnGetMail);
     }
 
 }
